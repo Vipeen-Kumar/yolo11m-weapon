@@ -1,0 +1,96 @@
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dataset files (do not upload dataset)
+dataset/
+data/
+images/
+labels/
+*.xml
+*.yaml
+*.yml
+annotations/
+
+# Temporary and log files
+*.log
+*.tmp
+*.temp
+*_temp*
+*.bak
+*.cache
+.cache/
+
+# Streamlit cache
+.streamlit/
+
+# Local documentation (temporary files)
+ANALYTICS_*.txt
+ANALYTICS_*.md
+README_ANALYTICS.md
+COMPLETION_REPORT.txt
+DOCUMENTATION_INDEX.txt
+FINAL_SUMMARY.txt
+FIX_ERROR.txt
+LATEST_CHANGES.txt
+QUICK_START.txt
+QUICK_START_ANALYTICS.txt
+RUN_APP.txt
+RUN_COMMANDS.txt
+SETUP_COMPLETE.txt
+START_HERE.txt
+VERSION_UPDATE.txt
+WEBCAM_UPDATES.txt
+
+# Batch files (local development only)
+*.bat
+*.cmd
+
+# Results and outputs
+results/
+runs/
+output/
+predictions/
+
+# Credentials and secrets
+.env
+.env.local
+.env.*.local
+secrets.json
+credentials.json
+*.pem
+*.key
+
+# OS files
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Large model checkpoints (keep only best.pt)
+last.pt
+epoch*.pt
+
+# Jupyter notebooks (if any)
+.ipynb_checkpoints/
+*.ipynb
