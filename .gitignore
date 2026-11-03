@@ -41,8 +41,10 @@ annotations/
 *.cache
 .cache/
 
-# Streamlit cache
-.streamlit/
+# Streamlit cache (but keep config.toml)
+.streamlit/cache/
+.streamlit/*.cache
+.streamlit/.credentials/
 
 # Local documentation (temporary files)
 ANALYTICS_*.txt
