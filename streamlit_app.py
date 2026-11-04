@@ -1,6 +1,7 @@
 import streamlit as st
 import cv2
 import numpy as np
+from ultralytics import YOLO
 from PIL import Image
 import os
 from pathlib import Path
@@ -9,14 +10,6 @@ import warnings
 import pandas as pd
 import plotly.graph_objects as go
 import tempfile
-
-# Try to import YOLO, but gracefully handle if PyTorch isn't available
-try:
-    from ultralytics import YOLO
-    YOLO_AVAILABLE = True
-except ImportError:
-    YOLO_AVAILABLE = False
-    st.error("YOLO model not available. Trying ONNX runtime instead.")
 
 # Import analytics module
 from analytics import YOLO11Analytics

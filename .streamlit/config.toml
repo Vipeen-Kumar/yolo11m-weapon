@@ -19,6 +19,7 @@ runOnSave = true
 maxUploadSize = 200
 enableXsrfProtection = true
 enableCORS = false
+pythonVersion = "3.11"
 
 [client]
 toolbarMode = "viewer"
