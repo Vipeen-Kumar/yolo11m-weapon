@@ -18,6 +18,11 @@ from analytics import YOLO11Analytics
 warnings.filterwarnings("ignore")
 os.environ['STREAMLIT_LOGGER_LEVEL'] = 'error'
 
+# Disable TensorFlow/PyTorch verbose logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import logging
+logging.getLogger('ultralytics').setLevel(logging.ERROR)
+
 # Set page config
 st.set_page_config(
     page_title="YOLO Object Detection",

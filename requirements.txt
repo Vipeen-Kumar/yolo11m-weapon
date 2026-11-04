@@ -1,9 +1,16 @@
-ultralytics>=8.0.0
-opencv-python>=4.8.0
-torch>=2.0.0
-torchvision>=0.15.0
-numpy>=1.24.0
-pillow>=10.0.0
+# Core dependencies
 streamlit>=1.28.0
+ultralytics>=8.0.0
+opencv-python-headless>=4.8.0
+
+# Deep learning (CPU-optimized for cloud deployment)
+torch>=2.0.0,<2.2
+torchvision>=0.15.0,<0.17
+
+# Data processing & visualization
+numpy>=1.24.0,<1.25
+pandas>=1.5.0,<2.1
 plotly>=5.0.0
-pandas>=1.5.0
+
+# Image processing
+pillow>=10.0.0
