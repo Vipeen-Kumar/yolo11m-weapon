@@ -3,13 +3,13 @@ streamlit>=1.28.0
 ultralytics>=8.0.0
 opencv-python-headless>=4.8.0
 
-# Deep learning (CPU-optimized for cloud deployment)
-torch>=2.0.0,<2.2
-torchvision>=0.15.0,<0.17
+# Deep learning (CPU-optimized, compatible with Python 3.8-3.11)
+torch==2.1.2
+torchvision==0.16.2
 
 # Data processing & visualization
-numpy>=1.24.0,<1.25
-pandas>=1.5.0,<2.1
+numpy>=1.24.0
+pandas>=1.5.0
 plotly>=5.0.0
 
 # Image processing
