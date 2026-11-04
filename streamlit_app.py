@@ -146,57 +146,68 @@ if mode == "📷 Image Detection":
             # Run detection
             if st.button("🚀 Run Detection", key="image_detect", use_container_width=True):
                 with st.spinner("Running detection..."):
-                    # Convert PIL image to numpy array
-                    img_array = np.array(image)
+                    # Convert PIL image to numpy array with proper dtype
+                    img_array = np.array(image).astype(np.uint8)
                     
-                    # Run YOLO inference
-                    results = st.session_state.model.predict(
-                        source=img_array,
-                        conf=confidence,
-                        verbose=False
-                    )
+                    # Ensure RGB format (handle RGBA or grayscale)
+                    if len(img_array.shape) == 2:  # Grayscale
+                        img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+                    elif img_array.shape[2] == 4:  # RGBA
+                        img_array = cv2.cvtColor(img_array, cv2.COLOR_RGBA2RGB)
                     
-                    # Get annotated frame
-                    annotated_img = results[0].plot()
-                    annotated_img_pil = Image.fromarray(annotated_img)
-                    
-                    with col2:
-                        st.image(annotated_img_pil, caption="Detection Results", use_column_width=True)
-                    
-                    # Display statistics
-                    st.markdown("### 📊 Detection Statistics")
-                    detections = results[0].boxes
-                    st.metric("Objects Detected", len(detections))
-                    
-                    if len(detections) > 0:
-                        # Create a dataframe with detection details
-                        detection_data = []
-                        for box in detections:
-                            detection_data.append({
-                                "Class": st.session_state.model.names[int(box.cls)],
-                                "Confidence": f"{float(box.conf):.2%}",
-                                "X1": f"{int(box.xyxy[0][0])}",
-                                "Y1": f"{int(box.xyxy[0][1])}",
-                                "X2": f"{int(box.xyxy[0][2])}",
-                                "Y2": f"{int(box.xyxy[0][3])}"
-                            })
-                        
-                        st.dataframe(detection_data, use_container_width=True, hide_index=True)
-                        
-                        # Download annotated image
-                        from io import BytesIO
-                        buf = BytesIO()
-                        annotated_img_pil.save(buf, format="PNG")
-                        buf.seek(0)
-                        st.download_button(
-                            label="⬇️ Download Annotated Image",
-                            data=buf.getvalue(),
-                            file_name="detection_result.png",
-                            mime="image/png",
-                            use_container_width=True
+                    try:
+                        # Run YOLO inference
+                        results = st.session_state.model.predict(
+                            source=img_array,
+                            conf=confidence,
+                            verbose=False
                         )
-                    else:
-                        st.info("ℹ️ No objects detected in this image")
+                        
+                        # Get annotated frame
+                        annotated_img = results[0].plot()
+                        annotated_img_pil = Image.fromarray(annotated_img)
+                        
+                        with col2:
+                            st.image(annotated_img_pil, caption="Detection Results", use_column_width=True)
+                        
+                        # Display statistics
+                        st.markdown("### 📊 Detection Statistics")
+                        detections = results[0].boxes
+                        st.metric("Objects Detected", len(detections))
+                        
+                        if len(detections) > 0:
+                            # Create a dataframe with detection details
+                            detection_data = []
+                            for box in detections:
+                                detection_data.append({
+                                    "Class": st.session_state.model.names[int(box.cls)],
+                                    "Confidence": f"{float(box.conf):.2%}",
+                                    "X1": f"{int(box.xyxy[0][0])}",
+                                    "Y1": f"{int(box.xyxy[0][1])}",
+                                    "X2": f"{int(box.xyxy[0][2])}",
+                                    "Y2": f"{int(box.xyxy[0][3])}"
+                                })
+                            
+                            st.dataframe(detection_data, use_container_width=True, hide_index=True)
+                            
+                            # Download annotated image
+                            from io import BytesIO
+                            buf = BytesIO()
+                            annotated_img_pil.save(buf, format="PNG")
+                            buf.seek(0)
+                            st.download_button(
+                                label="⬇️ Download Annotated Image",
+                                data=buf.getvalue(),
+                                file_name="detection_result.png",
+                                mime="image/png",
+                                use_container_width=True
+                            )
+                        else:
+                            st.info("ℹ️ No objects detected in this image")
+                    
+                    except Exception as e:
+                        st.error(f"❌ Detection error: {str(e)}")
+                        st.info("Try uploading a different image format (JPG or PNG recommended).")
 
 # VIDEO DETECTION
 elif mode == "🎬 Video Detection":
@@ -222,48 +233,49 @@ elif mode == "🎬 Video Detection":
             
             if st.button("🚀 Run Detection on Video", key="video_detect", use_container_width=True):
                 with st.spinner("Processing video... This may take a few moments ⏳"):
-                    # Create output path
-                    output_path = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False).name
-                    
-                    # Run YOLO inference on video
-                    results = st.session_state.model.predict(
-                        source=temp_video_path,
-                        conf=confidence,
-                        save=True,
-                        project=tempfile.gettempdir(),
-                        name="detection",
-                        verbose=False
-                    )
-                    
-                    # Find the output video
-                    temp_dir = tempfile.gettempdir()
-                    detection_dir = os.path.join(temp_dir, "detection", "runs", "detect", "predict")
-                    
-                    # Get video files from results
-                    video_files = []
-                    for root, dirs, files in os.walk(temp_dir):
-                        for file in files:
-                            if file.endswith((".mp4", ".avi")):
-                                video_files.append(os.path.join(root, file))
-                    
-                    if video_files:
-                        output_video = video_files[0]
-                        st.success("✅ Video processing complete!")
+                    try:
+                        # Run YOLO inference on video
+                        results = st.session_state.model.predict(
+                            source=temp_video_path,
+                            conf=confidence,
+                            save=True,
+                            project=tempfile.gettempdir(),
+                            name="detection",
+                            verbose=False
+                        )
                         
-                        # Display the video
-                        st.video(output_video)
+                        # Find the output video
+                        temp_dir = tempfile.gettempdir()
                         
-                        # Download button
-                        with open(output_video, "rb") as f:
-                            st.download_button(
-                                label="⬇️ Download Processed Video",
-                                data=f.read(),
-                                file_name="detection_video.mp4",
-                                mime="video/mp4",
-                                use_container_width=True
-                            )
-                    else:
-                        st.info("ℹ️ Video processed. Check the output directory.")
+                        # Get video files from results
+                        video_files = []
+                        for root, dirs, files in os.walk(temp_dir):
+                            for file in files:
+                                if file.endswith((".mp4", ".avi")):
+                                    video_files.append(os.path.join(root, file))
+                        
+                        if video_files:
+                            output_video = video_files[0]
+                            st.success("✅ Video processing complete!")
+                            
+                            # Display the video
+                            st.video(output_video)
+                            
+                            # Download button
+                            with open(output_video, "rb") as f:
+                                st.download_button(
+                                    label="⬇️ Download Processed Video",
+                                    data=f.read(),
+                                    file_name="detection_video.mp4",
+                                    mime="video/mp4",
+                                    use_container_width=True
+                                )
+                        else:
+                            st.info("ℹ️ Video processed. Check the output directory.")
+                    
+                    except Exception as e:
+                        st.error(f"❌ Video processing error: {str(e)}")
+                        st.info("Try uploading a smaller video file or a different format.")
             
             # Cleanup
             os.unlink(temp_video_path)
